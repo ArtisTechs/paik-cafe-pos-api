@@ -1,6 +1,8 @@
 package com.paikcafe.pos.backend.demo.entity;
 
 import com.paikcafe.pos.backend.demo.enumtype.OrderStatus;
+import com.paikcafe.pos.backend.demo.enumtype.OrderType;
+
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -41,6 +43,10 @@ public class Order {
     private OrderStatus orderStatus;
 
     private LocalDateTime orderTime;
+    
+    @Column(name = "order_type")
+    @Enumerated(EnumType.STRING)
+    private OrderType orderType;
 
     // === Getters and Setters ===
 
@@ -123,4 +129,8 @@ public class Order {
     public void setOrderTime(LocalDateTime orderTime) {
         this.orderTime = orderTime;
     }
+    
+    public OrderType getOrderType() { return orderType; }
+    
+    public void setOrderType(OrderType orderType) { this.orderType = orderType; }
 }

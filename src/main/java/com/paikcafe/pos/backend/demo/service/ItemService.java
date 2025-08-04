@@ -32,6 +32,23 @@ public class ItemService {
 
         ItemType itemType = itemTypeRepository.findById(dto.getItemTypeId())
                 .orElseThrow(ItemTypeNotFoundException::new);
+        
+     // Require price array, not null or empty
+        if (dto.getPrice() == null || dto.getPrice().isEmpty()) {
+            throw new IllegalArgumentException("Price list is required and cannot be empty.");
+        }
+
+        // If variations exist, price length must match variations
+        if (dto.getVariation() != null && !dto.getVariation().isEmpty()) {
+            if (dto.getPrice().size() != dto.getVariation().size()) {
+                throw new IllegalArgumentException("Price array length must match variation array length.");
+            }
+        } else {
+            // If no variation, there should be only one price
+            if (dto.getPrice().size() != 1) {
+                throw new IllegalArgumentException("Price list must have exactly one entry when there are no variations.");
+            }
+        }
 
         Item item = new Item();
         item.setName(dto.getName());
@@ -66,6 +83,23 @@ public class ItemService {
             .ifPresent(existing -> {
                 throw new ItemAlreadyExistsException();
             });
+        
+     // Require price array, not null or empty
+        if (dto.getPrice() == null || dto.getPrice().isEmpty()) {
+            throw new IllegalArgumentException("Price list is required and cannot be empty.");
+        }
+
+        // If variations exist, price length must match variations
+        if (dto.getVariation() != null && !dto.getVariation().isEmpty()) {
+            if (dto.getPrice().size() != dto.getVariation().size()) {
+                throw new IllegalArgumentException("Price array length must match variation array length.");
+            }
+        } else {
+            // If no variation, there should be only one price
+            if (dto.getPrice().size() != 1) {
+                throw new IllegalArgumentException("Price list must have exactly one entry when there are no variations.");
+            }
+        }
 
         // Validate item type
         ItemType itemType = itemTypeRepository.findById(dto.getItemTypeId())

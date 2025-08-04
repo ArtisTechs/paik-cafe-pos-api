@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -55,6 +57,10 @@ public class OrderService {
         if (variation != null && variation.size() != itemIds.size()) {
             throw new ApiException("Variation length must match item count", "VARIATION_LENGTH_MISMATCH");
         }
+        
+        if (dto.getOrderType() == null) {
+            throw new ApiException("Order type is required", "ORDER_TYPE_REQUIRED");
+        }
 
         // ✅ Validate that all itemIds exist
      // ✅ Use Set to remove duplicates
@@ -86,6 +92,7 @@ public class OrderService {
         order.setChangeAmount(dto.getChangeAmount());
         order.setOrderStatus(dto.getOrderStatus());
         order.setOrderTime(LocalDateTime.now());
+        order.setOrderType(dto.getOrderType());
 
         return orderRepository.save(order);
     }
@@ -119,14 +126,20 @@ public class OrderService {
             dto.setQuantity(o.getQuantity());
             dto.setVariation(o.getVariation());
             dto.setItemIds(o.getItemIds());
+            dto.setOrderType(o.getOrderType());
 
             // Fetch item details
-            List<Item> items = itemRepository.findAllById(o.getItemIds());
-            List<ItemSummaryDto> itemSummaries = items.stream()
-                .map(ItemSummaryDto::new)
-                .toList();
-
-            dto.setItems(itemSummaries);
+            List<Item> allItems = itemRepository.findAllById(
+                    o.getItemIds().stream().distinct().toList()
+                );
+                Map<UUID, Item> itemMap = allItems.stream()
+                    .collect(Collectors.toMap(Item::getId, item -> item));
+                List<ItemSummaryDto> itemSummaries = o.getItemIds().stream()
+                    .map(itemMap::get)
+                    .filter(Objects::nonNull)
+                    .map(ItemSummaryDto::new)
+                    .collect(Collectors.toList());
+                dto.setItems(itemSummaries);
 
             return dto;
         }).toList();
@@ -157,6 +170,10 @@ public class OrderService {
         if (variation != null && variation.size() != itemIds.size()) {
             throw new ApiException("Variation length must match item count", "VARIATION_LENGTH_MISMATCH");
         }
+        
+        if (dto.getOrderType() == null) {
+            throw new ApiException("Order type is required", "ORDER_TYPE_REQUIRED");
+        }
 
         // Ensure all itemIds exist
         Set<UUID> uniqueItemIds = new HashSet<>(itemIds);
@@ -180,6 +197,7 @@ public class OrderService {
         existingOrder.setCash(dto.getCash());
         existingOrder.setChangeAmount(dto.getChangeAmount());
         existingOrder.setOrderStatus(dto.getOrderStatus());
+        existingOrder.setOrderType(dto.getOrderType());
 
         return orderRepository.save(existingOrder);
     }

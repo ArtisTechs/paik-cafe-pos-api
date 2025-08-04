@@ -10,7 +10,7 @@ public class ItemDto {
     private String description;
     private UUID itemTypeId;
     private List<String> variation;
-    private BigDecimal price;
+    private List<BigDecimal> price;
     private String photo;
     private boolean inStock;
 
@@ -48,11 +48,11 @@ public class ItemDto {
         this.variation = variation;
     }
 
-    public BigDecimal getPrice() {
+    public List<BigDecimal> getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(List<BigDecimal> price) {
         this.price = price;
     }
 

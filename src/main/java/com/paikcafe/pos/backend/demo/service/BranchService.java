@@ -24,4 +24,9 @@ public class BranchService {
     public List<Branch> getAllBranches() {
         return branchRepository.findAll();
     }
+    
+    public Branch getBranchByName(String name) {
+        return branchRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("Branch not found with name: " + name));
+    }
 }

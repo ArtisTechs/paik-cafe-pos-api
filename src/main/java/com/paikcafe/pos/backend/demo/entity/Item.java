@@ -24,8 +24,8 @@ public class Item {
     @ElementCollection
     private List<String> variation;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+    @ElementCollection
+    private List<BigDecimal> price;
 
     private String photo;
 
@@ -73,11 +73,11 @@ public class Item {
         this.variation = variation;
     }
 
-    public BigDecimal getPrice() {
+    public List<BigDecimal> getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(List<BigDecimal> price) {
         this.price = price;
     }
 

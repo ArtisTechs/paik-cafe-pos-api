@@ -1,6 +1,7 @@
 package com.paikcafe.pos.backend.demo.dto;
 
 import com.paikcafe.pos.backend.demo.enumtype.OrderStatus;
+import com.paikcafe.pos.backend.demo.enumtype.OrderType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class OrderDto {
     private BigDecimal changeAmount;
     private OrderStatus orderStatus;
     private LocalDateTime orderTime;
+    private OrderType orderType;
 
     // === Getters and Setters ===
 
@@ -110,4 +112,8 @@ public class OrderDto {
     public void setOrderTime(LocalDateTime orderTime) {
         this.orderTime = orderTime;
     }
+    
+    public OrderType getOrderType() { return orderType; }
+    
+    public void setOrderType(OrderType orderType) { this.orderType = orderType; }
 }

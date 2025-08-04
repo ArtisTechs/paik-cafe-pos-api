@@ -25,5 +25,11 @@ public class BranchController {
     public List<Branch> getAllBranches() {
         return branchService.getAllBranches();
     }
+    
+    @GetMapping("/by-name/{name}")
+    public Branch getBranchByName(@PathVariable String name) {
+        return branchService.getBranchByName(name);
+    }
+
 }
 	

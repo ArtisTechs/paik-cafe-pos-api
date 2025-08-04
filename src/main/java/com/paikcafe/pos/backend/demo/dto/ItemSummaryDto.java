@@ -1,13 +1,14 @@
 package com.paikcafe.pos.backend.demo.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 import com.paikcafe.pos.backend.demo.entity.Item;
 
 public class ItemSummaryDto {
     private UUID id;
     private String name;
-    private BigDecimal price;
+    private List<BigDecimal> price;
     private String photo;
     private Boolean inStock;
 
@@ -39,11 +40,11 @@ public class ItemSummaryDto {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public List<BigDecimal> getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(List<BigDecimal> price) {
         this.price = price;
     }
 
