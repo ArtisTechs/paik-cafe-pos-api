@@ -11,6 +11,7 @@ public class ItemSummaryDto {
     private List<BigDecimal> price;
     private String photo;
     private Boolean inStock;
+    private Boolean bestSeller;
 
     public ItemSummaryDto() {}
 
@@ -20,6 +21,7 @@ public class ItemSummaryDto {
         this.price = item.getPrice();
         this.photo = item.getPhoto();
         this.inStock = item.isInStock();
+        this.bestSeller = item.isBestSeller();
     }
 
     // Getters and Setters
@@ -62,5 +64,13 @@ public class ItemSummaryDto {
 
     public void setInStock(Boolean inStock) {
         this.inStock = inStock;
+    }
+    
+    public boolean isBestSeller() {
+        return bestSeller;
+    }
+
+    public void setBestSeller(boolean bestSeller) {
+        this.bestSeller = bestSeller;
     }
 }

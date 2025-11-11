@@ -10,8 +10,8 @@ import java.util.UUID;
 
 public class OrderDto {
 
-	private String orderNo;
-	private UUID id;
+    private String orderNo;
+    private UUID id;
     private List<UUID> itemIds;
     private List<Integer> quantity;
     private List<String> variation;
@@ -22,6 +22,9 @@ public class OrderDto {
     private OrderStatus orderStatus;
     private LocalDateTime orderTime;
     private OrderType orderType;
+
+    // ✅ new field
+    private String tableNumber;
 
     // === Getters and Setters ===
 
@@ -48,7 +51,7 @@ public class OrderDto {
     public void setItems(List<ItemSummaryDto> items) {
         this.items = items;
     }
-    
+
     public List<UUID> getItemIds() {
         return itemIds;
     }
@@ -104,7 +107,7 @@ public class OrderDto {
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
-    
+
     public LocalDateTime getOrderTime() {
         return orderTime;
     }
@@ -112,8 +115,21 @@ public class OrderDto {
     public void setOrderTime(LocalDateTime orderTime) {
         this.orderTime = orderTime;
     }
-    
-    public OrderType getOrderType() { return orderType; }
-    
-    public void setOrderType(OrderType orderType) { this.orderType = orderType; }
+
+    public OrderType getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(OrderType orderType) {
+        this.orderType = orderType;
+    }
+
+    // ✅ getter/setter for tableNumber
+    public String getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(String tableNumber) {
+        this.tableNumber = tableNumber;
+    }
 }

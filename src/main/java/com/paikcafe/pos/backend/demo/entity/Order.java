@@ -2,7 +2,6 @@ package com.paikcafe.pos.backend.demo.entity;
 
 import com.paikcafe.pos.backend.demo.enumtype.OrderStatus;
 import com.paikcafe.pos.backend.demo.enumtype.OrderType;
-
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -43,10 +42,13 @@ public class Order {
     private OrderStatus orderStatus;
 
     private LocalDateTime orderTime;
-    
+
     @Column(name = "order_type")
     @Enumerated(EnumType.STRING)
     private OrderType orderType;
+
+    @Column(name = "table_number", length = 50)
+    private String tableNumber;
 
     // === Getters and Setters ===
 
@@ -110,8 +112,8 @@ public class Order {
         return changeAmount;
     }
 
-    public void setChangeAmount(BigDecimal change) {
-        this.changeAmount = change;
+    public void setChangeAmount(BigDecimal changeAmount) {
+        this.changeAmount = changeAmount;
     }
 
     public OrderStatus getOrderStatus() {
@@ -129,8 +131,20 @@ public class Order {
     public void setOrderTime(LocalDateTime orderTime) {
         this.orderTime = orderTime;
     }
-    
-    public OrderType getOrderType() { return orderType; }
-    
-    public void setOrderType(OrderType orderType) { this.orderType = orderType; }
+
+    public OrderType getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(OrderType orderType) {
+        this.orderType = orderType;
+    }
+
+    public String getTableNumber() {
+        return tableNumber;
+    }
+
+    public void setTableNumber(String tableNumber) {
+        this.tableNumber = tableNumber;
+    }
 }

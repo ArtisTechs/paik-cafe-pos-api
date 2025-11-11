@@ -40,48 +40,40 @@ public class OrderService {
         List<Integer> quantity = dto.getQuantity();
         List<String> variation = dto.getVariation();
 
-        // ✅ Validate non-empty items and quantities
+        // Validate non-empty items and quantities
         if (itemIds == null || itemIds.isEmpty()) {
             throw new ApiException("Item list cannot be empty", "EMPTY_ITEM_LIST");
         }
-
         if (quantity == null || quantity.isEmpty()) {
             throw new ApiException("Quantity list cannot be empty", "EMPTY_QUANTITY_LIST");
         }
 
-        // ✅ Validate matching lengths
+        // Validate matching lengths
         if (itemIds.size() != quantity.size()) {
             throw new ApiException("Item IDs and quantities must have the same length", "ITEM_QUANTITY_LENGTH_MISMATCH");
         }
-
         if (variation != null && variation.size() != itemIds.size()) {
             throw new ApiException("Variation length must match item count", "VARIATION_LENGTH_MISMATCH");
         }
-        
         if (dto.getOrderType() == null) {
             throw new ApiException("Order type is required", "ORDER_TYPE_REQUIRED");
         }
 
-        // ✅ Validate that all itemIds exist
-     // ✅ Use Set to remove duplicates
+        // Validate that all itemIds exist
         Set<UUID> uniqueItemIds = new HashSet<>(itemIds);
-
-        // ✅ Query DB once
         List<Item> foundItems = itemRepository.findAllById(uniqueItemIds);
-
-        // ✅ Check if any item is missing
         if (foundItems.size() != uniqueItemIds.size()) {
             Set<UUID> foundIds = foundItems.stream().map(Item::getId).collect(Collectors.toSet());
-            uniqueItemIds.removeAll(foundIds); // This will now contain only the missing ones
+            uniqueItemIds.removeAll(foundIds);
             throw new ApiException("Some item IDs were not found: " + uniqueItemIds, "ITEM_NOT_FOUND");
         }
 
-        // ✅ Validate status
+        // Validate status
         if (dto.getOrderStatus() == null) {
             throw new ApiException("Order status is required", "INVALID_ORDER_STATUS");
         }
 
-        // ✅ Proceed to create
+        // Create
         Order order = new Order();
         order.setOrderNo(generateOrderNo());
         order.setItemIds(itemIds);
@@ -94,19 +86,23 @@ public class OrderService {
         order.setOrderTime(LocalDateTime.now());
         order.setOrderType(dto.getOrderType());
 
+        // NEW: table number (nullable or blank allowed)
+        // Ensure your Order entity has a String tableNumber field with getter/setter.
+        order.setTableNumber(
+            dto.getTableNumber() == null ? "" : dto.getTableNumber().trim()
+        );
+
         return orderRepository.save(order);
     }
 
-    
     private String generateOrderNo() {
         Optional<Order> latestOrder = orderRepository.findTopByOrderByOrderNoDesc();
-
         int nextNumber = latestOrder.map(o -> Integer.parseInt(o.getOrderNo())).orElse(0) + 1;
         return String.format("%06d", nextNumber);
     }
     
     public List<OrderDto> getOrders(OrderStatus status, LocalDateTime start, LocalDateTime end, String sortBy, String order) {
-        Sort.Direction direction = order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction direction = order != null && order.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Sort sort = Sort.by(direction, sortBy != null ? sortBy : "orderTime");
 
         Specification<Order> spec = Specification.where(OrderSpecification.hasStatus(status))
@@ -128,22 +124,24 @@ public class OrderService {
             dto.setItemIds(o.getItemIds());
             dto.setOrderType(o.getOrderType());
 
+            // NEW: include table number in list response
+            dto.setTableNumber(o.getTableNumber());
+
             // Fetch item details
             List<Item> allItems = itemRepository.findAllById(
-                    o.getItemIds().stream().distinct().toList()
-                );
-                Map<UUID, Item> itemMap = allItems.stream()
-                    .collect(Collectors.toMap(Item::getId, item -> item));
-                List<ItemSummaryDto> itemSummaries = o.getItemIds().stream()
-                    .map(itemMap::get)
-                    .filter(Objects::nonNull)
-                    .map(ItemSummaryDto::new)
-                    .collect(Collectors.toList());
-                dto.setItems(itemSummaries);
+                o.getItemIds().stream().distinct().toList()
+            );
+            Map<UUID, Item> itemMap = allItems.stream()
+                .collect(Collectors.toMap(Item::getId, item -> item));
+            List<ItemSummaryDto> itemSummaries = o.getItemIds().stream()
+                .map(itemMap::get)
+                .filter(Objects::nonNull)
+                .map(ItemSummaryDto::new)
+                .collect(Collectors.toList());
+            dto.setItems(itemSummaries);
 
             return dto;
         }).toList();
-
     }
     
     public Order updateOrder(UUID id, OrderDto dto) {
@@ -158,19 +156,15 @@ public class OrderService {
         if (itemIds == null || itemIds.isEmpty()) {
             throw new ApiException("Item list cannot be empty", "EMPTY_ITEM_LIST");
         }
-
         if (quantity == null || quantity.isEmpty()) {
             throw new ApiException("Quantity list cannot be empty", "EMPTY_QUANTITY_LIST");
         }
-
         if (itemIds.size() != quantity.size()) {
             throw new ApiException("Item IDs and quantities must have the same length", "ITEM_QUANTITY_LENGTH_MISMATCH");
         }
-
         if (variation != null && variation.size() != itemIds.size()) {
             throw new ApiException("Variation length must match item count", "VARIATION_LENGTH_MISMATCH");
         }
-        
         if (dto.getOrderType() == null) {
             throw new ApiException("Order type is required", "ORDER_TYPE_REQUIRED");
         }
@@ -199,6 +193,11 @@ public class OrderService {
         existingOrder.setOrderStatus(dto.getOrderStatus());
         existingOrder.setOrderType(dto.getOrderType());
 
+        // OPTIONAL: allow updating table number as well
+        if (dto.getTableNumber() != null) {
+            existingOrder.setTableNumber(dto.getTableNumber().trim());
+        }
+
         return orderRepository.save(existingOrder);
     }
 
@@ -207,7 +206,6 @@ public class OrderService {
         if (!exists) {
             throw new ApiException("Order not found", "ORDER_NOT_FOUND");
         }
-
         orderRepository.deleteById(id);
     }
     
@@ -222,6 +220,4 @@ public class OrderService {
         order.setOrderStatus(newStatus);
         return orderRepository.save(order);
     }
-
-
 }

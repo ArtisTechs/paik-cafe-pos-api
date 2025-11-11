@@ -13,6 +13,7 @@ public class ItemDto {
     private List<BigDecimal> price;
     private String photo;
     private boolean inStock;
+    private boolean bestSeller;
 
     // === Getters and Setters ===
 
@@ -70,5 +71,13 @@ public class ItemDto {
 
     public void setInStock(boolean inStock) {
         this.inStock = inStock;
+    }
+    
+    public boolean isBestSeller() {
+        return bestSeller;
+    }
+
+    public void isBestSeller(boolean bestSeller) {
+        this.bestSeller = bestSeller;
     }
 }

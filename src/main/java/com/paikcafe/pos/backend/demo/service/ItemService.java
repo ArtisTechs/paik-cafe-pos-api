@@ -58,6 +58,7 @@ public class ItemService {
         item.setPrice(dto.getPrice());
         item.setPhoto(dto.getPhoto());
         item.setInStock(dto.isInStock());
+        item.setBestSeller(dto.isBestSeller());
 
         return itemRepository.save(item);
     }
@@ -112,6 +113,7 @@ public class ItemService {
         item.setPrice(dto.getPrice());
         item.setPhoto(dto.getPhoto());
         item.setInStock(dto.isInStock());
+        item.setBestSeller(dto.isBestSeller());
 
         return itemRepository.save(item);
     }

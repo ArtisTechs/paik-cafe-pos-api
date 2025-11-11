@@ -30,6 +30,8 @@ public class Item {
     private String photo;
 
     private boolean inStock;
+    
+    private boolean bestSeller;
 
     // === Getters and Setters ===
 
@@ -96,4 +98,8 @@ public class Item {
     public void setInStock(boolean inStock) {
         this.inStock = inStock;
     }
+    
+    public boolean isBestSeller() { return bestSeller; }
+    
+    public void setBestSeller(boolean bestSeller) { this.bestSeller = bestSeller; }
 }
